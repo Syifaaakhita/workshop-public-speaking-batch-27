@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 3. URL Google Apps Script Anda
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt5gPYojjMTWFaBe2zzngP0ASVHbuwY_JZtmyyyyRVv6q2xsNMoh48LzMDr6dXvUu7gQ/exec";
 
-    // 4. Otomatis Membaca Kursi Terisi dari Google Sheets untuk Peserta Lain
+    // 4. Otomatis Membaca Kursi Terisi dari Google Sheets
     fetchSeatsFromSheet(SCRIPT_URL);
 
     // 5. Handle Pengiriman Form
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // A. LANGSUNG UBAH KURSI JADI MERAH DI TAMPILAN WEB
+            // A. Langsung ubah kursi jadi merah & terkunci di tampilan lokal
             markOccupiedSeats([seatTerpilih]);
 
             // B. Kirim Data ke Google Sheets
@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => console.log('Data berhasil disimpan ke Google Sheets!'))
                 .catch(error => console.error('Error saat menyimpan ke Google Sheets:', error));
 
-            // C. Buka WhatsApp Admin
-            const adminPhone = "6281342999083";
+            // C. Buka WhatsApp Admin (Nomor Baru: 628518273319)
+            const adminPhone = "628518273319";
             const message = `Halo Admin, saya ingin mendaftar workshop.%0A%0A` +
                             `*Nama:* ${encodeURIComponent(nama)}%0A` +
                             `*No. WhatsApp:* ${encodeURIComponent(whatsapp)}%0A` +
@@ -126,7 +126,7 @@ function selectSeat(btnElement, seatNum) {
     if (selectedSeatInputEl) selectedSeatInputEl.value = seatNum;
 }
 
-// FUNGSI UTAMA: MENGUBAH KURSI MENJADI MERAH (SOLD OUT & DISABLED)
+// MENGUBAH KURSI MENJADI MERAH (SOLD OUT & DISABLED)
 function markOccupiedSeats(seatArray) {
     seatArray.forEach(seatNum => {
         if (!seatNum) return;
@@ -135,7 +135,7 @@ function markOccupiedSeats(seatArray) {
         if (btn) {
             btn.classList.add('occupied');
             btn.classList.remove('locked', 'selected');
-            btn.disabled = true; // Mengunci kursi agar tidak bisa diklik lagi
+            btn.disabled = true;
         }
     });
 }
