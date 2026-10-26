@@ -139,5 +139,3 @@ function markOccupiedSeats(seatArray) {
         }
     });
 }
-//Tambahkan ?v=2 di akhir nama file script.js 
-<script src="script.js?v=2"></script>
