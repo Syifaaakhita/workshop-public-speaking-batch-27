@@ -99,13 +99,19 @@ function generateSeats(containerId, prefix, total, category, activeCategory) {
     }
 }
 
-// FUNGSI UTAMA: PILIH KURSI
+// FUNGSI UTAMA: PILIH KURSI (LENGKAP DENGAN WARNA TERPILIH MERAH)
 function selectSeat(btnElement, seatNum) {
     if (btnElement.classList.contains('occupied') || btnElement.classList.contains('locked')) return;
 
-    document.querySelectorAll('.seat-btn').forEach(s => s.classList.remove('selected'));
+    // 1. Hapus status terpilih dari semua kursi lain
+    document.querySelectorAll('.seat-btn').forEach(s => {
+        s.classList.remove('selected');
+    });
+
+    // 2. Tambahkan class 'selected' ke kursi yang baru diklik
     btnElement.classList.add('selected');
 
+    // 3. Update teks tampilan & input hidden form
     const selectedSeatNumEl = document.getElementById('selectedSeatNum');
     const selectedSeatInputEl = document.getElementById('selectedSeatInput');
 

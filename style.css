@@ -820,3 +820,20 @@ textarea.form-control {
         gap: 5px;
     }
 }
+/* WARNA SEAT TERPILIH (MERAH MENYALA + EFEK GLOW) */
+.seat-btn.selected {
+    background-color: #ef4444 !important; /* Warna Merah */
+    color: #ffffff !important;
+    transform: scale(1.15);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.8) !important;
+    border: 2px solid #ffffff !important;
+}
+
+/* WARNA SEAT SOLD OUT / OCCUPIED (MERAH GELAP/DISABLED) */
+.seat-btn.occupied, 
+.seat-sample.occupied {
+    background-color: #991b1b !important; /* Merah Gelap */
+    color: #cbd5e1 !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
