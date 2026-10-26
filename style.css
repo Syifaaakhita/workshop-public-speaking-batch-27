@@ -837,3 +837,10 @@ textarea.form-control {
     opacity: 0.6;
     cursor: not-allowed;
 }
+/* WARNA KURSI MERAH / SOLD OUT */
+.seat-btn.occupied {
+    background-color: #ef4444 !important; /* Warna Merah */
+    color: #ffffff !important;
+    cursor: not-allowed;
+    opacity: 0.8;
+}

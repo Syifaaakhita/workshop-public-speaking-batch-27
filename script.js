@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
     generateSeats('bronzeRow', 'B', 50, 'bronze', activeCategory);
 
     // 3. URL Google Apps Script Anda
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymQUkgPQKkFETjHBkuG_NnUl1Dozdv5hF2boj3MyKQeWuz3uDWmrRUhDzHOzIhifrtGA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt5gPYojjMTWFaBe2zzngP0ASVHbuwY_JZtmyyyyRVv6q2xsNMoh48LzMDr6dXvUu7gQ/exec";
 
-    // 4. OTOMATIS AMBIL KURSI TERISI DARI GOOGLE SHEETS
+    // 4. Otomatis Membaca Kursi Terisi dari Google Sheets untuk Peserta Lain
     fetchSeatsFromSheet(SCRIPT_URL);
 
     // 5. Handle Pengiriman Form
@@ -45,7 +45,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Kirim Data ke Google Sheets
+            // A. LANGSUNG UBAH KURSI JADI MERAH DI TAMPILAN WEB
+            markOccupiedSeats([seatTerpilih]);
+
+            // B. Kirim Data ke Google Sheets
             const formData = new FormData();
             formData.append('nama', nama);
             formData.append('whatsapp', whatsapp);
@@ -54,14 +57,10 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('catatan', catatan);
 
             fetch(SCRIPT_URL, { method: 'POST', body: formData })
-                .then(response => {
-                    console.log('Data berhasil disimpan ke Google Sheets!');
-                    // Tandai langsung kursi secara lokal di tampilan
-                    markOccupiedSeats([seatTerpilih]);
-                })
+                .then(response => console.log('Data berhasil disimpan ke Google Sheets!'))
                 .catch(error => console.error('Error saat menyimpan ke Google Sheets:', error));
 
-            // Buka WhatsApp Admin
+            // C. Buka WhatsApp Admin
             const adminPhone = "6281342999083";
             const message = `Halo Admin, saya ingin mendaftar workshop.%0A%0A` +
                             `*Nama:* ${encodeURIComponent(nama)}%0A` +
@@ -76,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// FUNGSI MEMBACA DATA KURSI TERISI DARI GSHEET
+// MEMBACA DATA KURSI TERISI DARI GSHEET
 function fetchSeatsFromSheet(url) {
     fetch(url)
         .then(response => response.json())
@@ -127,7 +126,7 @@ function selectSeat(btnElement, seatNum) {
     if (selectedSeatInputEl) selectedSeatInputEl.value = seatNum;
 }
 
-// TANDA KURSI TERJUAL / SOLD OUT
+// FUNGSI UTAMA: MENGUBAH KURSI MENJADI MERAH (SOLD OUT & DISABLED)
 function markOccupiedSeats(seatArray) {
     seatArray.forEach(seatNum => {
         if (!seatNum) return;
@@ -136,7 +135,7 @@ function markOccupiedSeats(seatArray) {
         if (btn) {
             btn.classList.add('occupied');
             btn.classList.remove('locked', 'selected');
-            btn.disabled = true;
+            btn.disabled = true; // Mengunci kursi agar tidak bisa diklik lagi
         }
     });
 }
