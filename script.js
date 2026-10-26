@@ -61,7 +61,7 @@
                     .catch(error => console.error('Error saat menyimpan ke Google Sheets:', error));
 
                 // C. Buka WhatsApp Admin (Nomor Baru: 6285182723319)
-                const adminPhone = "+62 851-8272-3319"; // Ganti dengan nomor WhatsApp admin Anda
+                const adminPhone = "6285182723319"; // Ganti dengan nomor WhatsApp admin Anda
                 const message = `Halo Admin, saya ingin mendaftar workshop.%0A%0A` +
                                 `*Nama:* ${encodeURIComponent(nama)}%0A` +
                                 `*No. WhatsApp:* ${encodeURIComponent(whatsapp)}%0A` +
