@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Inisialisasi Elemen Form & Paket
     const waForm = document.getElementById('waForm');
     const paketInput = document.getElementById('paket');
     const pagePackage = paketInput ? paketInput.value.toLowerCase() : '';
 
-    // 2. Deteksi Kategori Kursi Aktif Berdasarkan Nama Paket
+    // 1. Deteksi Kategori Kursi Aktif Berdasarkan Nama Paket
     let activeCategory = '';
     if (pagePackage.includes('bronze') || pagePackage.includes('paket 1')) {
         activeCategory = 'bronze';
@@ -14,18 +13,25 @@ document.addEventListener('DOMContentLoaded', function () {
         activeCategory = 'platinum';
     }
 
-    // 3. Generate Denah Kursi
+    // 2. Generate Denah Kursi
     generateSeats('platinumRow', 'P', 20, 'platinum', activeCategory);
     generateSeats('silverRow', 'S', 30, 'silver', activeCategory);
     generateSeats('bronzeRow', 'B', 50, 'bronze', activeCategory);
 
-    // 4. Daftar Kursi yang Sudah Terjual (Sold Out) - Ubah jika ada kursi terisi lainnya
-    markOccupiedSeats(['P-01', 'S-05', 'B-10', 'B-11']);
+    // 3. URL Google Apps Script Terbaru Anda
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt5gPYojjMTWFaBe2zzngP0ASVHbuwY_JZtmyyyyRVv6q2xsNMoh48LzMDr6dXvUu7gQ/exec";
 
-    // 5. URL Google Apps Script milik Anda
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjxfprMTgHCGo3YemXAayqpP-7_5nBxi0eTOGyrqG4AgdIUGwge_Pgnb8g84YXIB9Diw/exec";
+    // 4. Otomatis Mengambil Data Kursi Terisi dari Google Sheets
+    fetch(SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.seats) {
+                markOccupiedSeats(data.seats);
+            }
+        })
+        .catch(error => console.error('Gagal mengambil data kursi terisi:', error));
 
-    // 6. Handle Pengiriman Form
+    // 5. Handle Pengiriman Form Pendaftaran
     if (waForm) {
         waForm.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -41,13 +47,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const seatTerpilih = selectedSeatInput ? selectedSeatInput.value.trim() : '';
             const catatan = catatanInput ? catatanInput.value.trim() : '';
 
-            // Validasi: Wajib memilih kursi sebelum kirim
+            // Validasi: Wajib memilih kursi
             if (!seatTerpilih) {
                 alert('Silakan klik dan pilih nomor kursi Anda pada denah sebelum melanjutkan!');
                 return;
             }
 
-            // Kirim Data ke Google Sheets di latar belakang
+            // Kirim Data ke Google Sheets
             const formData = new FormData();
             formData.append('nama', nama);
             formData.append('whatsapp', whatsapp);
@@ -74,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// FUNGSI UTAMA: MEMBUAT SEAT DINAMIS
+// MEMBUAT DENSITY SEAT DINAMIS
 function generateSeats(containerId, prefix, total, category, activeCategory) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -99,19 +105,13 @@ function generateSeats(containerId, prefix, total, category, activeCategory) {
     }
 }
 
-// FUNGSI UTAMA: PILIH KURSI (LENGKAP DENGAN WARNA TERPILIH MERAH)
+// MEMILIH KURSI (BERUBAH MERAH SAAT DIKLIK)
 function selectSeat(btnElement, seatNum) {
     if (btnElement.classList.contains('occupied') || btnElement.classList.contains('locked')) return;
 
-    // 1. Hapus status terpilih dari semua kursi lain
-    document.querySelectorAll('.seat-btn').forEach(s => {
-        s.classList.remove('selected');
-    });
-
-    // 2. Tambahkan class 'selected' ke kursi yang baru diklik
+    document.querySelectorAll('.seat-btn').forEach(s => s.classList.remove('selected'));
     btnElement.classList.add('selected');
 
-    // 3. Update teks tampilan & input hidden form
     const selectedSeatNumEl = document.getElementById('selectedSeatNum');
     const selectedSeatInputEl = document.getElementById('selectedSeatInput');
 
@@ -119,7 +119,7 @@ function selectSeat(btnElement, seatNum) {
     if (selectedSeatInputEl) selectedSeatInputEl.value = seatNum;
 }
 
-// FUNGSI UTAMA: TANDA KURSI TERJUAL / SOLD OUT
+// TANDA KURSI TERJUAL / SOLD OUT DARI GOOGLE SHEETS
 function markOccupiedSeats(seatArray) {
     seatArray.forEach(seatNum => {
         const btn = document.querySelector(`[data-seat="${seatNum}"]`);
