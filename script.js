@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     generateSeats('bronzeRow', 'B', 50, 'bronze', activeCategory);
 
     // 3. URL Google Apps Script Anda
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt5gPYojjMTWFaBe2zzngP0ASVHbuwY_JZtmyyyyRVv6q2xsNMoh48LzMDr6dXvUu7gQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymQUkgPQKkFETjHBkuG_NnUl1Dozdv5hF2boj3MyKQeWuz3uDWmrRUhDzHOzIhifrtGA/exec";
 
     // 4. OTOMATIS AMBIL KURSI TERISI DARI GOOGLE SHEETS
     fetchSeatsFromSheet(SCRIPT_URL);
