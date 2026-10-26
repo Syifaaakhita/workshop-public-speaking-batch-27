@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => console.log('Data berhasil disimpan ke Google Sheets!'))
                 .catch(error => console.error('Error saat menyimpan ke Google Sheets:', error));
 
-            // C. Buka WhatsApp Admin (Nomor 12-digit yang benar: 628518273319)
-            const adminPhone = "628518273319";
+            // C. Buka WhatsApp Admin (Hanya Angka Murni: 6285182723319)
+            const adminPhone = "6285182723319";
             const message = `Halo Admin, saya ingin mendaftar workshop.%0A%0A` +
                             `*Nama:* ${encodeURIComponent(nama)}%0A` +
                             `*No. WhatsApp:* ${encodeURIComponent(whatsapp)}%0A` +
