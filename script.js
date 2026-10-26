@@ -18,20 +18,13 @@ document.addEventListener('DOMContentLoaded', function () {
     generateSeats('silverRow', 'S', 30, 'silver', activeCategory);
     generateSeats('bronzeRow', 'B', 50, 'bronze', activeCategory);
 
-    // 3. URL Google Apps Script Terbaru Anda
+    // 3. URL Google Apps Script Anda
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt5gPYojjMTWFaBe2zzngP0ASVHbuwY_JZtmyyyyRVv6q2xsNMoh48LzMDr6dXvUu7gQ/exec";
 
-    // 4. Otomatis Mengambil Data Kursi Terisi dari Google Sheets
-    fetch(SCRIPT_URL)
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.seats) {
-                markOccupiedSeats(data.seats);
-            }
-        })
-        .catch(error => console.error('Gagal mengambil data kursi terisi:', error));
+    // 4. OTOMATIS AMBIL KURSI TERISI DARI GOOGLE SHEETS
+    fetchSeatsFromSheet(SCRIPT_URL);
 
-    // 5. Handle Pengiriman Form Pendaftaran
+    // 5. Handle Pengiriman Form
     if (waForm) {
         waForm.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -47,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const seatTerpilih = selectedSeatInput ? selectedSeatInput.value.trim() : '';
             const catatan = catatanInput ? catatanInput.value.trim() : '';
 
-            // Validasi: Wajib memilih kursi
             if (!seatTerpilih) {
                 alert('Silakan klik dan pilih nomor kursi Anda pada denah sebelum melanjutkan!');
                 return;
@@ -62,7 +54,11 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('catatan', catatan);
 
             fetch(SCRIPT_URL, { method: 'POST', body: formData })
-                .then(response => console.log('Data berhasil disimpan ke Google Sheets!'))
+                .then(response => {
+                    console.log('Data berhasil disimpan ke Google Sheets!');
+                    // Tandai langsung kursi secara lokal di tampilan
+                    markOccupiedSeats([seatTerpilih]);
+                })
                 .catch(error => console.error('Error saat menyimpan ke Google Sheets:', error));
 
             // Buka WhatsApp Admin
@@ -79,6 +75,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// FUNGSI MEMBACA DATA KURSI TERISI DARI GSHEET
+function fetchSeatsFromSheet(url) {
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.seats && Array.isArray(data.seats)) {
+                markOccupiedSeats(data.seats);
+            }
+        })
+        .catch(error => console.error('Gagal mengambil data kursi terisi:', error));
+}
 
 // MEMBUAT DENSITY SEAT DINAMIS
 function generateSeats(containerId, prefix, total, category, activeCategory) {
@@ -105,7 +113,7 @@ function generateSeats(containerId, prefix, total, category, activeCategory) {
     }
 }
 
-// MEMILIH KURSI (BERUBAH MERAH SAAT DIKLIK)
+// PILIH KURSI
 function selectSeat(btnElement, seatNum) {
     if (btnElement.classList.contains('occupied') || btnElement.classList.contains('locked')) return;
 
@@ -119,13 +127,16 @@ function selectSeat(btnElement, seatNum) {
     if (selectedSeatInputEl) selectedSeatInputEl.value = seatNum;
 }
 
-// TANDA KURSI TERJUAL / SOLD OUT DARI GOOGLE SHEETS
+// TANDA KURSI TERJUAL / SOLD OUT
 function markOccupiedSeats(seatArray) {
     seatArray.forEach(seatNum => {
-        const btn = document.querySelector(`[data-seat="${seatNum}"]`);
+        if (!seatNum) return;
+        const cleanSeat = seatNum.toString().trim();
+        const btn = document.querySelector(`[data-seat="${cleanSeat}"]`);
         if (btn) {
             btn.classList.add('occupied');
-            btn.classList.remove('locked');
+            btn.classList.remove('locked', 'selected');
+            btn.disabled = true;
         }
     });
 }
